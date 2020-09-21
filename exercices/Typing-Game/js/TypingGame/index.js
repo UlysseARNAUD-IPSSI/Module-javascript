@@ -6,6 +6,7 @@ export class TypingGame {
     score;
 
     words;
+    word;
 
     constructor({secondsLimit = 10} = {}) {
 
@@ -14,6 +15,7 @@ export class TypingGame {
         this.score = score;
 
         this.dynamicValues = {};
+        this.dynamicValues['secondes-limite'] = secondsLimit;
         this.dynamicValues['secondes-restantes'] = secondsLimit;
         this.dynamicValues['status'] = "Bonjour !";
         this.dynamicValues['score'] = score;
@@ -25,7 +27,6 @@ export class TypingGame {
         this.initializeWords();
 
         this.updateDynamicValues();
-
     }
 
     updateDynamicValues() {
@@ -50,7 +51,6 @@ export class TypingGame {
             cursorElement++
         ) {
             const element = dynamicValueElements[cursorElement];
-            console.log({cursorElement, dynamicValueElements, element})
             element.innerHTML = value;
         }
     }
@@ -61,11 +61,11 @@ export class TypingGame {
         fetch('/assets/texts/sentences.txt').then(response => {
             return response.text();
         }).then(response => {
-            console.log({response});
             response = response.replace(/,/ig, ' ');
             response = response.replace(/\./ig, ' ');
             response = response.replace(/\r/ig, ' ');
             response = response.replace(/\n/ig, ' ');
+
             return response.split(' ');
         }).then(_words => {
             for (
@@ -89,11 +89,14 @@ export class TypingGame {
                     word = word.slice(indexOfSingleQuote + 1);
                 }
 
+                // On enlève les accents
+                word = word.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
+
                 words.push(word.toLowerCase());
             }
         }).finally(() => {
             words = words.filter(function onlyUnique(value, index, self) {
-                return self.indexOf(value) === index;
+                return self.indexOf(value) === index && 3 < value.length;
             });
             this.words = words;
             this.start();
@@ -101,7 +104,7 @@ export class TypingGame {
     }
 
     start() {
-        console.log('Game starting !', {thisWords: this.words});
+        this.setWord();
         this.startCountdown();
     }
 
@@ -114,11 +117,16 @@ export class TypingGame {
         this.dynamicValues['secondes-restantes'] = secondsRemaining;
         this.updateDynamicValue('secondes-restantes');
 
-        console.log({secondsRemaining});
         if (0 === secondsRemaining) {
             this.dynamicValues['status'] = 'Game over !';
             this.updateDynamicValue('status');
+            this.end();
             return;
+        }
+
+        if (9 === secondsRemaining) {
+            this.dynamicValues['status'] = 'Ne ralentissez surtout pas !';
+            this.updateDynamicValue('status');
         }
 
         if (7 === secondsRemaining) {
@@ -137,6 +145,27 @@ export class TypingGame {
         }
 
         setTimeout(() => this._countdownInterval(), 1000);
+    }
+
+    setWord() {
+        const randomPosition = Math.floor(Math.random() * this.words.length);
+        const selectedWord = this.words[randomPosition];
+        if (selectedWord === this.word) {
+            this.setWord();
+            return;
+        }
+        this.word = selectedWord;
+        this.dynamicValues['mot-actuel'] = selectedWord;
+        this.updateDynamicValue('mot-actuel');
+    }
+
+    end() {
+        const section = document.querySelector('section[data-name="jouer"]');
+        const input = section.querySelector('input[name="mot-utilisateur"]');
+        setTimeout(function() {
+            input.classList.add('disabled');
+            input.disabled = true;
+        }, 0);
     }
 
 }

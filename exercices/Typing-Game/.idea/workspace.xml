@@ -20,8 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60eac836-c071-44a9-8f86-f481d51a78b2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Pierre-Feuille-Ciseaux/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Pierre-Feuille-Ciseaux/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Pierre-Feuille-Ciseaux/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../Pierre-Feuille-Ciseaux/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/TypingGame/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/TypingGame/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +72,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1600697534391</updated>
-      <workItem from="1600697535438" duration="5807000" />
+      <workItem from="1600697535438" duration="8430000" />
     </task>
     <servers />
   </component>
