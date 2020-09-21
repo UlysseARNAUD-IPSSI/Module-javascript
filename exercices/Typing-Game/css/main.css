@@ -5,3 +5,7 @@ html, body {
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+section[data-name]:not(.show) {
+    display: none;
+}
