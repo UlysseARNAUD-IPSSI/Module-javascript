@@ -1,0 +1,68 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Typing game</title>
+
+    <link rel="stylesheet" href="css/main.css" defer>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" defer>
+</head>
+<body>
+
+    <section data-name="introduction">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h1>Typing game</h1>
+                    <div class="grid-buttons">
+                        <a href="#">Jouer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section data-name="jouer">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12">
+                    <h1>Typing game</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <p>Ecrivez le mot suivant en <span data-name="secondes-restants" data-dynamic></span> secondes : </p>
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-12">
+                    <p>statue</p>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-12">
+                    <input type="text" name="mot-utilisateur" placeholder="Commencez à écrire...">
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-12">
+                    <p><span data-dynamic data-name="status">Oh non!</span></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-12">
+                    <p>Temps restants : <span data-name="secondes-restantes" data-dynamic></span> secondes</p>
+                </div>
+                <div class="col-md-6 col-12">
+                    <p>Score : <span data-name="score" data-dynamic></span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/index.js" type="module" defer></script>
+
+</body>
+</html>

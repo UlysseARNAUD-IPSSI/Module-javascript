@@ -1,0 +1,7 @@
+@import "sections/_introduction.css";
+@import "sections/_jouer.css";
+
+html, body {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
