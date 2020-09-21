@@ -16,7 +16,7 @@ export class TypingGame {
 
         this.dynamicValues = {};
         this.dynamicValues['secondes-limite'] = secondsLimit;
-        this.dynamicValues['secondes-restantes'] = secondsLimit;
+        this.dynamicValues['secondes-restantes'] = secondsLimit + 1;
         this.dynamicValues['status'] = "Bonjour !";
         this.dynamicValues['score'] = score;
 
@@ -125,17 +125,17 @@ export class TypingGame {
             return;
         }
 
-        if (9 === secondsRemaining) {
+        if (8 === secondsRemaining) {
             this.dynamicValues['status'] = 'Ne ralentissez surtout pas !';
             this.updateDynamicValue('status');
         }
 
-        if (7 === secondsRemaining) {
+        if (6 === secondsRemaining) {
             this.dynamicValues['status'] = 'Pas assez vite !';
             this.updateDynamicValue('status');
         }
 
-        if (5 === secondsRemaining) {
+        if (4 === secondsRemaining) {
             this.dynamicValues['status'] = 'On se rapproche de la fin !';
             this.updateDynamicValue('status');
         }
@@ -180,6 +180,18 @@ export class TypingGame {
         const section = document.querySelector('section[data-name="jouer"]');
         const input = section.querySelector('input[name="mot-utilisateur"]');
         input.value = '';
+
+        const messages = [
+            'Bien !',
+            'Continuer !',
+            'La force est avec vous !',
+            "C'est bien mais plus vite"
+        ];
+        const positionAleatoire = Math.floor(Math.random() * messages.length);
+        const messageAleatoire = messages[positionAleatoire];
+
+        this.dynamicValues['status'] =  messageAleatoire;
+        this.updateDynamicValue('status');
     }
 
     resetTimeRemaining() {
@@ -193,10 +205,16 @@ export class TypingGame {
         const input = section.querySelector('input[name="mot-utilisateur"]');
         input.addEventListener('keypress', event => {
             const {target, key} = event;
-            const {value} = target;
+            const {value, selectionStart} = target;
             const word = document.querySelector('span[data-name="mot-actuel"]').innerHTML;
-            let currentValue = value + key;
-            if (word === currentValue) this.nextWord();
+            let currentValue = value.substring(0,selectionStart) + key + value.substring(selectionStart);
+            if (word === currentValue) {
+                this.nextWord();
+                setTimeout(function() {
+                    const position = target.selectionStart;
+                    input.value = input.value.substring(0, position-1) + input.value.substring(position+1);
+                }, 0);
+            }
         });
     }
 
