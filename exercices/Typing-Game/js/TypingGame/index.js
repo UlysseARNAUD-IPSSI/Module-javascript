@@ -106,6 +106,7 @@ export class TypingGame {
     start() {
         this.setWord();
         this.startCountdown();
+        this.enableInputForUser();
     }
 
     startCountdown() {
@@ -166,6 +167,37 @@ export class TypingGame {
             input.classList.add('disabled');
             input.disabled = true;
         }, 0);
+    }
+
+    nextWord() {
+        const score = this.dynamicValues.score;
+        this.dynamicValues['score'] = score + 1;
+        this.updateDynamicValue('score');
+
+        this.setWord();
+        this.resetTimeRemaining();
+
+        const section = document.querySelector('section[data-name="jouer"]');
+        const input = section.querySelector('input[name="mot-utilisateur"]');
+        input.value = '';
+    }
+
+    resetTimeRemaining() {
+        const secondsLimit = this.secondsLimit;
+        this.dynamicValues['secondes-restantes'] = secondsLimit;
+        this.updateDynamicValue('secondes-restantes');
+    }
+
+    enableInputForUser() {
+        const section = document.querySelector('section[data-name="jouer"]');
+        const input = section.querySelector('input[name="mot-utilisateur"]');
+        input.addEventListener('keypress', event => {
+            const {target, key} = event;
+            const {value} = target;
+            const word = document.querySelector('span[data-name="mot-actuel"]').innerHTML;
+            let currentValue = value + key;
+            if (word === currentValue) this.nextWord();
+        });
     }
 
 }
