@@ -1,26 +1,43 @@
+import {generateModalEndGame} from "../shared/_generateModalEndGame.js";
+
 export class TypingGame {
 
     dynamicValues;
     dynamicValuesElement;
     secondsLimit;
+    secondsLimitMin;
     score;
+    niveau;
 
     words;
     word;
 
-    constructor({secondsLimit = 10} = {}) {
+    constructor(
+        {
+            secondsLimit = 15,
+            secondsLimitMin = 3,
+            scoreEachLevel = 15
+        } = {}
+    ) {
 
         const score = 0;
+        const niveau = 1;
 
         this.score = score;
+        this.niveau = niveau;
+
+        this.scoreEachLevel = scoreEachLevel;
 
         this.dynamicValues = {};
         this.dynamicValues['secondes-limite'] = secondsLimit;
         this.dynamicValues['secondes-restantes'] = secondsLimit + 1;
         this.dynamicValues['status'] = "Bonjour !";
         this.dynamicValues['score'] = score;
+        this.dynamicValues['niveau'] = niveau;
 
         this.dynamicValuesElement = document.querySelectorAll('span[data-dynamic]');
+        this.originalSecondsLimit = secondsLimit;
+        this.secondsLimitMin = secondsLimitMin;
         this.secondsLimit = secondsLimit;
 
         this.words = [];
@@ -114,13 +131,9 @@ export class TypingGame {
     }
 
     _countdownInterval() {
-        const secondsRemaining = this.dynamicValues['secondes-restantes'] - 1;
-        this.dynamicValues['secondes-restantes'] = secondsRemaining;
-        this.updateDynamicValue('secondes-restantes');
+        const secondsRemaining = this.dynamicValues['secondes-restantes'];
 
         if (0 === secondsRemaining) {
-            this.dynamicValues['status'] = 'Game over !';
-            this.updateDynamicValue('status');
             this.end();
             return;
         }
@@ -145,6 +158,9 @@ export class TypingGame {
             this.updateDynamicValue('status');
         }
 
+        this.dynamicValues['secondes-restantes'] = secondsRemaining - 1;
+        this.updateDynamicValue('secondes-restantes');
+
         setTimeout(() => this._countdownInterval(), 1000);
     }
 
@@ -163,10 +179,47 @@ export class TypingGame {
     end() {
         const section = document.querySelector('section[data-name="jouer"]');
         const input = section.querySelector('input[name="mot-utilisateur"]');
-        setTimeout(function() {
+        setTimeout(function () {
             input.classList.add('disabled');
             input.disabled = true;
         }, 0);
+
+        this.dynamicValues['secondes-restantes'] = 0;
+        this.updateDynamicValue('secondes-restantes');
+
+        this.dynamicValues['status'] = 'Game over !';
+        this.updateDynamicValue('status');
+
+        const niveau = this.niveau;
+        const score = this.score;
+
+        const modalEndGame = generateModalEndGame();
+        modalEndGame.then(modal => {
+
+            const modals = document.querySelectorAll('my-modal[data-name="end-game"]');
+            for (
+                let cursor = 0, cursorMax = modals.length;
+                cursor < cursorMax;
+                cursor++
+            ) {
+                modals[cursor].remove();
+            }
+
+            section.appendChild(modal);
+
+            const scoreInput = modal.querySelector('input[name="score"][type="hidden"]');
+            if (undefined !== scoreInput) {
+                setTimeout(function () {
+                    scoreInput.value = score;
+                }, 0);
+            }
+            const niveauInput = modal.querySelector('input[name="niveau"][type="hidden"]');
+            if (undefined !== niveauInput) {
+                setTimeout(function () {
+                    niveauInput.value = niveau;
+                }, 0);
+            }
+        });
     }
 
     nextWord() {
@@ -174,12 +227,38 @@ export class TypingGame {
         this.dynamicValues['score'] = score + 1;
         this.updateDynamicValue('score');
 
+        const isLevelUp = 0 === score % this.scoreEachLevel && 1 < score;
+        if (true === isLevelUp) {
+            const niveau = this.dynamicValues.niveau;
+            this.dynamicValues['niveau'] = niveau + 1;
+            this.updateDynamicValue('niveau');
+
+            const secondsLimit = Math.max(this.secondsLimitMin, Math.min(this.originalSecondsLimit, this.secondsLimit - 1));
+            this.secondsLimit = secondsLimit;
+            this.dynamicValues['secondes-restantes'] = secondsLimit;
+            this.dynamicValues['secondes-limite'] = secondsLimit;
+            this.updateDynamicValue('secondes-restantes');
+            this.updateDynamicValue('secondes-limite');
+
+            const messages = [
+                'Niveau suivant !',
+                'Level up !'
+            ];
+            const positionAleatoire = Math.floor(Math.random() * messages.length);
+            const messageAleatoire = messages[positionAleatoire];
+
+            this.dynamicValues['status'] = messageAleatoire;
+            this.updateDynamicValue('status');
+        }
+
         this.setWord();
         this.resetTimeRemaining();
 
         const section = document.querySelector('section[data-name="jouer"]');
         const input = section.querySelector('input[name="mot-utilisateur"]');
         input.value = '';
+
+        if (true === isLevelUp) return;
 
         const messages = [
             'Bien !',
@@ -190,7 +269,7 @@ export class TypingGame {
         const positionAleatoire = Math.floor(Math.random() * messages.length);
         const messageAleatoire = messages[positionAleatoire];
 
-        this.dynamicValues['status'] =  messageAleatoire;
+        this.dynamicValues['status'] = messageAleatoire;
         this.updateDynamicValue('status');
     }
 
@@ -207,12 +286,12 @@ export class TypingGame {
             const {target, key} = event;
             const {value, selectionStart} = target;
             const word = document.querySelector('span[data-name="mot-actuel"]').innerHTML;
-            let currentValue = value.substring(0,selectionStart) + key + value.substring(selectionStart);
+            let currentValue = value.substring(0, selectionStart) + key + value.substring(selectionStart);
             if (word === currentValue) {
                 this.nextWord();
-                setTimeout(function() {
+                setTimeout(function () {
                     const position = target.selectionStart;
-                    input.value = input.value.substring(0, position-1) + input.value.substring(position+1);
+                    input.value = input.value.substring(0, position - 1) + input.value.substring(position + 1);
                 }, 0);
             }
         });
