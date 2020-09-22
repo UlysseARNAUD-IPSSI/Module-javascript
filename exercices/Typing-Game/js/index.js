@@ -1,5 +1,5 @@
 import {TypingGame} from "./TypingGame/index.js";
-import {MyModalElement} from "./componenrts/my-modal/index.js";
+// import {MyModalElement} from "./components/my-modal/index.js";
 
 document.addEventListener('DOMContentLoaded', event => {
     const introductionSection = document.querySelector('section[data-name="introduction"]');
